@@ -138,6 +138,13 @@ impl PtyProcess {
 
                     // close pipe on sucessfull exec
                     fcntl(exec_err_pipe_w, FcntlArg::F_SETFD(FdFlag::FD_CLOEXEC))?;
+                    {
+                        // Test: restore the default handler for SIGINT
+                        use nix::sys::signal;
+                        use nix::sys::signal::SigHandler;
+                        use nix::sys::signal::Signal;
+                        unsafe { signal::signal(Signal::SIGINT, SigHandler::SigDfl) }.unwrap();
+                    }
 
                     let _ = command.exec();
                     Err(Error::last())
