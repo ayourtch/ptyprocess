@@ -99,6 +99,9 @@ impl PtyProcess {
     ///     let proc = PtyProcess::spawn(Command::new("bash"));
     /// ```
     pub fn spawn(mut command: Command) -> Result<Self> {
+        Self::spawn_ref(&mut command)
+    }
+    pub fn spawn_ref(command: &mut Command) -> Result<Self> {
         let master = Master::open()?;
         master.grant_slave_access()?;
         master.unlock_slave()?;
